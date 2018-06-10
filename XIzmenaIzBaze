@@ -1,0 +1,40 @@
+private void menjanje_Click(object sender, EventArgs e)
+        {
+            konekcija.Open();
+            string kom = "Update Producent set [Ime] = @ime, [Email] = @email where [ProducentID] =  @ID";
+            komanda = new OleDbCommand(kom, konekcija);
+            try
+            {
+                komanda.Parameters.AddWithValue("@ime", tbIme.Text);
+                komanda.Parameters.AddWithValue("@email", tbEmail.Text);
+                komanda.Parameters.AddWithValue("@ID", Convert.ToInt32(tbSifra.Text));
+                MessageBox.Show("Uspesno azurirano!", "Informacija", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                komanda.ExecuteNonQuery();
+
+            }
+            catch (Exception ex1)
+            {
+                MessageBox.Show(ex1.ToString(), "Neuspelo!");
+            }
+            konekcija.Close();
+
+
+            konekcija.Open();
+            komanda = new OleDbCommand("Select * from Producent order by ProducentID ASC", konekcija);
+            OleDbDataReader r;
+            r = komanda.ExecuteReader();
+            listView1.Items.Clear();
+            while (r.Read())
+            {
+                ListViewItem lv = new ListViewItem(r[0].ToString());
+                lv.SubItems.Add(r[1].ToString());
+                lv.SubItems.Add(r[2].ToString());
+
+                listView1.Items.Add(lv);
+            }
+            r.Close();
+            komanda.Dispose();
+            konekcija.Close();
+            tbSifra.Text = tbIme.Text = tbSifra.Text = "";
+        }
