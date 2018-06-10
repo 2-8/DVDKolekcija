@@ -1,0 +1,83 @@
+private void upis_Click(object sender, EventArgs e)
+        {
+            string sifra = tbSifra.Text;
+            string ime = tbIme.Text;
+            string email = tbSifra.Text;
+            try
+            {
+                if (tbSifra.Text == "" || tbIme.Text=="")
+                {
+                    MessageBox.Show("Sifra i ime su obavezna polja, popunite ih!");
+                    tbSifra.Focus();
+                }
+                else if(tbEmail.Text=="")
+                {
+                    OleDbCommand cmd = new OleDbCommand();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "insert into Producent (ProducentID,Ime) values ('" + sifra + "', '" + ime + "')";
+                    cmd.Connection = konekcija;
+                    konekcija.Open();
+                    cmd.ExecuteNonQuery();
+                    System.Windows.Forms.MessageBox.Show("Uspesno upisano u tabelu", "Informacija", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    konekcija.Close();
+                    //listView1.Clear();
+                    tbSifra.Text = tbIme.Text = tbSifra.Text = "";
+
+
+                    konekcija.Open();
+                    komanda = new OleDbCommand("Select * from Producent order by ProducentID ASC", konekcija);
+                    OleDbDataReader r;
+                    r = komanda.ExecuteReader();
+                    listView1.Items.Clear();
+                    while (r.Read())
+                    {
+                        ListViewItem lv = new ListViewItem(r[0].ToString());
+                        lv.SubItems.Add(r[1].ToString());
+                        lv.SubItems.Add(r[2].ToString());
+
+                        listView1.Items.Add(lv);
+                    }
+                    r.Close();
+                    komanda.Dispose();
+                    konekcija.Close();
+                }
+                else
+                {
+                    OleDbCommand cmd = new OleDbCommand();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = "insert into Producent (ProducentID,Ime,Email) values ('" + sifra + "', '" + ime + "', '" + email + "')";
+                    cmd.Connection = konekcija;
+                    konekcija.Open();
+                    cmd.ExecuteNonQuery();
+                    System.Windows.Forms.MessageBox.Show("Uspesno upisano u tabelu", "Informacija", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    konekcija.Close();
+                    //listView1.Clear();
+                    tbSifra.Text = tbIme.Text = tbSifra.Text = "";
+
+
+                    konekcija.Open();
+                    komanda = new OleDbCommand("Select * from Producent order by ProducentID ASC", konekcija);
+                    OleDbDataReader r;
+                    r = komanda.ExecuteReader();
+                    listView1.Items.Clear();
+                    while (r.Read())
+                    {
+                        ListViewItem lv = new ListViewItem(r[0].ToString());
+                        lv.SubItems.Add(r[1].ToString());
+                        lv.SubItems.Add(r[2].ToString());
+
+                        listView1.Items.Add(lv);
+                    }
+                    r.Close();
+                    komanda.Dispose();
+                    konekcija.Close();
+
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Uneta sifra postoji, unesite drugu!");
+                tbSifra.Clear();
+                tbSifra.Focus();
+            }
+        }
