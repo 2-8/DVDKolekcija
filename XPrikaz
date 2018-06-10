@@ -1,0 +1,33 @@
+private void prikaz_Click(object sender, EventArgs e)
+        {
+            listView1.Items.Clear();
+            konekcija.Open();
+            string query = "SELECT Film.Naziv, Zanr.NazivZanra, Glumac.Ime, Glumac.Prezime FROM Producent INNER JOIN ((ZANR INNER JOIN (TIP_ULOGE INNER JOIN (Glumac INNER JOIN (FILM INNER JOIN ULOGA ON FILM.FilmID = ULOGA.FilmID) ON Glumac.GlumacID = ULOGA.GlumacID) ON TIP_ULOGE.TipUlogeID = ULOGA.TipUlogeID) ON ZANR.ZanrID = FILM.ZanrID) INNER JOIN Producirao ON FILM.FilmID = Producirao.FilmID) ON Producent.ProducentID = Producirao.ProducentID Where TIP_ULOGE.Tip=@tip AND Producent.Ime=@ime";
+            komanda = new OleDbCommand(query, konekcija);
+            komanda.Parameters.AddWithValue("@tip", comboBox1.Text);
+            komanda.Parameters.AddWithValue("@ime", comboBox2.Text);
+            try
+            {
+                reader = komanda.ExecuteReader();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            while (true)
+            {
+                try
+                {
+                    reader.Read();
+                    string[] stavka = { reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString() };
+                    ListViewItem lv = new ListViewItem(stavka);
+                    listView1.Items.Add(lv);
+                }
+                catch (Exception ex)
+                {
+
+                    break;
+                }
+            }
+            konekcija.Close();
+        }
