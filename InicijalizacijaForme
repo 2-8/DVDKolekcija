@@ -1,0 +1,44 @@
+        OleDbConnection konekcija;
+        OleDbCommand komanda, komanda2;
+        OleDbDataAdapter adapter;
+        DataTable tabela;
+        
+        public FrmGlumci()
+        {
+            InitializeComponent();
+            string putanja = Environment.CurrentDirectory;
+            string[] putanjaBaze = putanja.Split(new string[] { "bin" }, StringSplitOptions.None);
+            AppDomain.CurrentDomain.SetData("DataDirectory", putanjaBaze[0]);
+            konekcija = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=|DataDirectory|\DVDkolekcija.accdb");
+        }
+        
+        private void FrmGlumci_Load(object sender, EventArgs e)
+        {
+            konekcija.Open();
+            komanda = new OleDbCommand("Select * from Glumac order by GlumacID ASC", konekcija);
+            OleDbDataReader r;
+            r = komanda.ExecuteReader();
+            listView1.Items.Clear();
+            while (r.Read())
+            {
+                ListViewItem lv = new ListViewItem(r[0].ToString());
+                lv.SubItems.Add(r[1].ToString());
+                lv.SubItems.Add(r[2].ToString());
+                if(r[3].ToString()=="")
+                {
+                    lv.SubItems.Add("");
+                }
+                else
+                {
+                    lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                }
+                //lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                //lv.SubItems.Add(r[3].ToString());
+                lv.SubItems.Add(r[4].ToString());
+
+                listView1.Items.Add(lv);
+            }
+            r.Close();
+            komanda.Dispose();
+            konekcija.Close();
+        }
