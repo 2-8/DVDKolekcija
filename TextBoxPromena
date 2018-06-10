@@ -1,0 +1,41 @@
+private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (tbSifra.Text != "")
+                {
+                    konekcija.Open();
+                    int sifra = Convert.ToInt32(tbSifra.Text);
+                    OleDbCommand komanda = new OleDbCommand("SELECT * FROM Glumac where GlumacID=" + sifra, konekcija);
+                    OleDbDataReader readerNaziv = komanda.ExecuteReader();
+                    readerNaziv.Read();
+                    tbIme.Text = readerNaziv[1].ToString();
+                    tbPrezime.Text = readerNaziv[2].ToString();
+                    //tbDr.Text = readerNaziv[3].ToString();
+                    /*DateTime datum = Convert.ToDateTime(readerNaziv[3].ToString());
+                    tbDr.Clear();
+                    tbDr.Text = datum.ToShortDateString();*/
+                    if(readerNaziv[3].ToString()=="")
+                    {
+                        tbDr.Text = "";
+                    }
+                    else
+                    {
+                        DateTime datum = Convert.ToDateTime(readerNaziv[3].ToString());
+                        tbDr.Clear();
+                        tbDr.Text = datum.ToShortDateString();
+                    }
+                    tbMr.Text = readerNaziv[4].ToString();
+                }
+                else
+                {
+                    tbSifra.Clear(); tbIme.Clear(); tbPrezime.Clear(); tbDr.Clear(); tbMr.Clear();
+                }
+            }
+            catch
+            {
+                tbIme.Clear(); tbPrezime.Clear(); tbDr.Clear(); tbMr.Clear();
+                MessageBox.Show("Ne postoji, ali ga mozete uneti!");
+            }
+            konekcija.Close();
+        }
