@@ -1,0 +1,34 @@
+OleDbConnection konekcija;
+        OleDbCommand komanda, komanda2;
+        OleDbDataAdapter adapter;
+        DataTable tabela;
+        OleDbDataReader reader;
+        public Frm_Po_Vrsti_Uloge_i_Producentu()
+        {
+            InitializeComponent();
+            string putanja = Environment.CurrentDirectory;
+            string[] putanjaBaze = putanja.Split(new string[] { "bin" }, StringSplitOptions.None);
+            AppDomain.CurrentDomain.SetData("DataDirectory", putanjaBaze[0]);
+            konekcija = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=|DataDirectory|\DVDkolekcija.accdb");
+        }
+        
+        private void Frm_Po_Vrsti_Uloge_i_Producentu_Load(object sender, EventArgs e)
+        {
+            konekcija.Open();
+            OleDbCommand komandaGrad = new OleDbCommand("SELECT Tip FROM TIP_ULOGE order by Tip ASC", konekcija);
+            OleDbDataReader riderGrad = komandaGrad.ExecuteReader();
+            while (riderGrad.Read())
+            {
+                comboBox1.Items.Add(riderGrad[0]);
+            }
+            konekcija.Close();
+
+            konekcija.Open();
+            OleDbCommand komandaGrad1 = new OleDbCommand("SELECT Ime FROM Producent order by Ime ASC", konekcija);
+            OleDbDataReader riderGrad1 = komandaGrad1.ExecuteReader();
+            while (riderGrad1.Read())
+            {
+                comboBox2.Items.Add(riderGrad1[0]);
+            }
+            konekcija.Close();
+        }
