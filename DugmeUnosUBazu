@@ -1,0 +1,100 @@
+private void Unos_Click(object sender, EventArgs e)
+        {
+            try { 
+            string sifra, ime, prezime, dr, mr;
+            sifra = tbSifra.Text;
+            ime = tbIme.Text;
+            prezime = tbPrezime.Text;
+            dr = tbDr.Text;
+            mr = tbMr.Text;
+            if(tbSifra.Text=="" || tbIme.Text == "" ||tbPrezime.Text == "" )
+            {
+                MessageBox.Show("Polja Sifra,Ime i Prezime su obavezna polja!");
+                tbSifra.Focus();
+            }
+
+            else if(tbDr.Text=="")
+            {
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "insert into Glumac (GlumacID,Ime,Prezime,MestoRodjenja) values ('" + sifra + "', '" + ime + "', '" + prezime + "', '" + mr + "')";
+                cmd.Connection = konekcija;
+                konekcija.Open();
+                cmd.ExecuteNonQuery();
+                System.Windows.Forms.MessageBox.Show("Uspesno upisano u tabelu", "Informacija", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                konekcija.Close();
+                tbDr.Text = tbIme.Text = tbSifra.Text = tbPrezime.Text = tbMr.Text = "";
+                konekcija.Open();
+                komanda = new OleDbCommand("Select * from Glumac order by GlumacID ASC", konekcija);
+                OleDbDataReader r;
+                r = komanda.ExecuteReader();
+                listView1.Items.Clear();
+                while (r.Read())
+                {
+                    ListViewItem lv = new ListViewItem(r[0].ToString());
+                    lv.SubItems.Add(r[1].ToString());
+                    lv.SubItems.Add(r[2].ToString());
+                    if (r[3].ToString() == "")
+                    {
+                        lv.SubItems.Add("");
+                    }
+                    else
+                    {
+                        lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                    }
+                    //lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                    //lv.SubItems.Add(r[3].ToString());
+                    lv.SubItems.Add(r[4].ToString());
+
+                    listView1.Items.Add(lv);
+                }
+                r.Close();
+                komanda.Dispose();
+                konekcija.Close();
+            }
+            else
+            {
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "insert into Glumac (GlumacID,Ime,Prezime,DatumRodjenja,MestoRodjenja) values ('" + sifra + "', '" + ime + "', '" + prezime + "', '" + dr + "', '" + mr + "')";
+                cmd.Connection = konekcija;
+                konekcija.Open();
+                cmd.ExecuteNonQuery();
+                System.Windows.Forms.MessageBox.Show("Uspesno upisano u tabelu", "Informacija", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                konekcija.Close();
+                    tbDr.Text = tbIme.Text = tbSifra.Text = tbPrezime.Text = tbMr.Text = "";
+                    konekcija.Open();
+                komanda = new OleDbCommand("Select * from Glumac order by GlumacID ASC", konekcija);
+                OleDbDataReader r;
+                r = komanda.ExecuteReader();
+                listView1.Items.Clear();
+                while (r.Read())
+                {
+                    ListViewItem lv = new ListViewItem(r[0].ToString());
+                    lv.SubItems.Add(r[1].ToString());
+                    lv.SubItems.Add(r[2].ToString());
+                    if (r[3].ToString() == "")
+                    {
+                        lv.SubItems.Add("");
+                    }
+                    else
+                    {
+                        lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                    }
+                    //lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                    //lv.SubItems.Add(r[3].ToString());
+                    lv.SubItems.Add(r[4].ToString());
+
+                    listView1.Items.Add(lv);
+                }
+                r.Close();
+                komanda.Dispose();
+                konekcija.Close();
+            }
+            }
+            catch
+            {
+                MessageBox.Show("Nepravilno uneti podaci!");
+                tbDr.Focus();
+            }
+        }
