@@ -1,0 +1,83 @@
+private void brisanje_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                bool pom = false;
+                konekcija.Open();
+                komanda = new OleDbCommand("Select * from Glumac", konekcija);
+                komanda2 = new OleDbCommand("Select GlumacID from Glumac", konekcija);
+                adapter = new OleDbDataAdapter(komanda);
+                tabela = new DataTable();
+                adapter.Fill(tabela);
+                OleDbDataReader r;
+
+                r = komanda2.ExecuteReader();
+
+                int i = Convert.ToInt32(tbSifra.Text);
+
+                for (int j = 0; j < tabela.Rows.Count; j++)
+                {
+                    r.Read();
+                    if (i == Int32.Parse(r[0].ToString()))
+                        pom = true;
+                }
+
+                if (!pom)
+                {
+                    MessageBox.Show("Unesite novi ID, uneti ne postoji u tabeli!", "Greska", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    tbSifra.Clear();
+                }
+                else
+                {
+                    i++;
+                    string del = "DELETE * FROM Glumac WHERE GlumacID=@id";
+                    komanda = new OleDbCommand(del, konekcija);
+                    komanda.Parameters.AddWithValue("@id", tbSifra.Text);
+
+                    try
+                    {
+                        komanda.ExecuteNonQuery();
+                        MessageBox.Show("Stavka je uspesno obrisana!", "Informacija", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Greska pri brisanju!", "Greska", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    tbSifra.Clear();
+                }
+                konekcija.Close();
+
+                konekcija.Open();
+                komanda = new OleDbCommand("Select * from Glumac order by GlumacID ASC", konekcija);
+                OleDbDataReader rd;
+                rd = komanda.ExecuteReader();
+                listView1.Items.Clear();
+                while (rd.Read())
+                {
+                    ListViewItem lv = new ListViewItem(rd[0].ToString());
+                    lv.SubItems.Add(rd[1].ToString());
+                    lv.SubItems.Add(rd[2].ToString());
+                    if (r[3].ToString() == "")
+                    {
+                        lv.SubItems.Add("");
+                    }
+                    else
+                    {
+                        lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                    }
+                    //lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                    //lv.SubItems.Add(rd[3].ToString());
+                    lv.SubItems.Add(rd[4].ToString());
+
+                    listView1.Items.Add(lv);
+                }
+                rd.Close();
+                komanda.Dispose();
+                konekcija.Close();
+            }
+            catch
+            {
+                MessageBox.Show("Popunite polje pod nazivom Sifra!");
+                tbSifra.Focus();
+            }
+        }
