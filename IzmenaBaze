@@ -1,0 +1,55 @@
+private void menjanje_Click(object sender, EventArgs e)
+        {
+            konekcija.Open();
+            string kom = "Update Glumac set [Ime] = @ime, [Prezime] = @prez, [DatumRodjenja] = @dr, [MestoRodjenja] = @mr where [GlumacID] =  @ID";
+            komanda = new OleDbCommand(kom, konekcija);
+            try
+            {
+                komanda.Parameters.AddWithValue("@ime", tbIme.Text);
+                komanda.Parameters.AddWithValue("@prez", tbPrezime.Text);
+                komanda.Parameters.AddWithValue("@dr", tbDr.Text);
+                komanda.Parameters.AddWithValue("@mr", tbMr.Text);
+                komanda.Parameters.AddWithValue("@ID", Convert.ToInt32(tbSifra.Text));
+                
+
+                komanda.ExecuteNonQuery();
+                MessageBox.Show("Uspesno azurirano!", "Informacija", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                tbDr.Text = tbIme.Text = tbSifra.Text = tbPrezime.Text = tbMr.Text = "";
+
+            }
+            catch 
+            {
+                MessageBox.Show("Nepravilo uneseni podaci!");
+                tbDr.Text = tbIme.Text = tbSifra.Text = tbPrezime.Text = tbMr.Text = "";
+            }
+            konekcija.Close();
+
+
+            konekcija.Open();
+            komanda = new OleDbCommand("Select * from Glumac order by GlumacID ASC", konekcija);
+            OleDbDataReader r;
+            r = komanda.ExecuteReader();
+            listView1.Items.Clear();
+            while (r.Read())
+            {
+                ListViewItem lv = new ListViewItem(r[0].ToString());
+                lv.SubItems.Add(r[1].ToString());
+                lv.SubItems.Add(r[2].ToString());
+                if (r[3].ToString() == "")
+                {
+                    lv.SubItems.Add("");
+                }
+                else
+                {
+                    lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                }
+                //lv.SubItems.Add(Convert.ToDateTime(r[3].ToString()).ToShortDateString());
+                //lv.SubItems.Add(r[3].ToString());
+                lv.SubItems.Add(r[4].ToString());
+
+                listView1.Items.Add(lv);
+            }
+            r.Close();
+            komanda.Dispose();
+            konekcija.Close();
+        }
